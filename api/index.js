@@ -1,6 +1,7 @@
 const express = require("express");
 const { body, validationResult } = require("express-validator");
 const cors = require("cors");
+const axios = require("axios");
 const path = require("path");
 
 /**
@@ -78,7 +79,7 @@ app.listen(3000, () => console.log("Server ready on port 3000."));
  * @param {responseMode} responseMode - レスポンスモード
  * @returns {void}
  */
-function sendWebhook(req, res, responseMode) {
+async function sendWebhook(req, res, responseMode) {
   /**
    * バリデーション結果
    */
@@ -91,5 +92,46 @@ function sendWebhook(req, res, responseMode) {
 
   // バリデーション成功
   const { id, count, webhook_url: webhookUrl } = req.body;
-  res.json({ message: "Validation passed!", data: { id, count, webhookUrl } });
+
+  try {
+    /**
+     * Webhook送信処理のエラーを格納
+     */
+    const error = await sendWebhookApi("test", webhookUrl);
+    if (error) {
+      throw error; // 明示的にエラーをスロー
+    }
+
+    res.json({
+      message: "Webhook sent successfully!",
+      data: { id, count, webhookUrl },
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message || "An unknown error occurred.",
+    });
+  }
+}
+
+/**
+ * Webhookを送信する処理(内部API)
+ * @param {string} message - メッセージ
+ * @param {string} webhookUrl - WebhookURL
+ * @returns {*}
+ */
+async function sendWebhookApi(message, webhookUrl) {
+  try {
+    // Webhookに送信するデータ
+    const payload = {
+      content: message, // メッセージ内容
+    };
+
+    // Webhookにデータを送信
+    const response = await axios.post(webhookUrl, payload);
+    console.log("メッセージが送信されました:", response.status);
+    return null; // 正常終了
+  } catch (error) {
+    console.error("エラーが発生しました:", error.message);
+    return error; // エラーを返す
+  }
 }
