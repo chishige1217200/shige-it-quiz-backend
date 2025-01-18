@@ -6,6 +6,7 @@ const path = require("path");
 
 /**
  * クイズデータが格納されているファイル名
+ * @type {string}
  */
 const fileName = "it-quiz-v1.6.0.json";
 
@@ -104,7 +105,6 @@ async function sendWebhook(req, res, responseMode) {
 
     res.json({
       message: "Webhook sent successfully!",
-      data: { id, count, webhookUrl },
     });
   } catch (error) {
     res.status(500).json({
