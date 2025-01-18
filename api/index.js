@@ -162,10 +162,10 @@ function generateQuestion(id, count) {
 }
 
 /**
- * 回答を生成する処理
+ * 解答を生成する処理
  * @param {number} id 問題の開始番号
  * @param {number} count 出題数
- * @return {string} 回答
+ * @return {string} 解答
  */
 function generateAnswer(id, count) {
   let content = "--------------------\n";
@@ -173,7 +173,7 @@ function generateAnswer(id, count) {
     let j = (id + i) % quizData.length;
     content = content + "Q" + j + ": " + quizData[j].answer + "\n";
     if (quizData[j].alternativeAnswers) {
-      content = content + "他の回答: [ ";
+      content = content + "他の解答: [ ";
       for (let k = 0; k < quizData[j].alternativeAnswers.length; k++) {
         content = content + quizData[j].alternativeAnswers[k];
         if (k < quizData[j].alternativeAnswers.length - 1) {

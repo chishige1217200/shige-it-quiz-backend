@@ -1,0 +1,21 @@
+### 出題送信
+POST http://localhost:3000/send_question
+Content-Type: application/json
+Accept: application/json
+
+{
+    "id": 0,
+    "count": 3,
+    "webhook_url": "https://discord.com/api/webhooks/XXXXXXXXXXXXXXXXXX/YYYYYYYYYYYYYYYYYYYYYYYYYY"
+}
+
+### 解答送信
+POST http://localhost:3000/send_answer
+Content-Type: application/json
+Accept: application/json
+
+{
+    "id": 0,
+    "count": 3,
+    "webhook_url": "https://discord.com/api/webhooks/XXXXXXXXXXXXXXXXXX/YYYYYYYYYYYYYYYYYYYYYYYYYY"
+}
