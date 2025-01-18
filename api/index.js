@@ -77,8 +77,8 @@ app.listen(3000, () => console.log("Server ready on port 3000."));
  * Webhookを送信する処理
  * @param {*} req
  * @param {*} res
- * @param {responseMode} mode - レスポンスモード
- * @returns {void}
+ * @param {responseMode} mode レスポンスモード
+ * @return {void}
  */
 async function sendWebhook(req, res, mode) {
   /**
@@ -91,9 +91,11 @@ async function sendWebhook(req, res, mode) {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  // バリデーション成功
   const { id, count, webhook_url: webhookUrl } = req.body;
 
+  /**
+   * Webhookに送信する文字列
+   */
   let message = "";
 
   if (mode === responseMode.question) {
@@ -123,9 +125,9 @@ async function sendWebhook(req, res, mode) {
 
 /**
  * Webhookを送信する処理(内部API)
- * @param {string} message - メッセージ
- * @param {string} webhookUrl - WebhookURL
- * @returns {*}
+ * @param {string} message メッセージ
+ * @param {string} webhookUrl WebhookURL
+ * @return {*}
  */
 async function sendWebhookApi(message, webhookUrl) {
   try {
@@ -144,6 +146,12 @@ async function sendWebhookApi(message, webhookUrl) {
   }
 }
 
+/**
+ * 問題文を生成する処理
+ * @param {number} id 問題の開始番号
+ * @param {number} count 出題数
+ * @return {string} 問題文
+ */
 function generateQuestion(id, count) {
   let content = "--------------------\n";
   for (let i = 0; i < count; i++) {
@@ -153,21 +161,28 @@ function generateQuestion(id, count) {
   return content;
 }
 
+/**
+ * 回答を生成する処理
+ * @param {number} id 問題の開始番号
+ * @param {number} count 出題数
+ * @return {string} 回答
+ */
 function generateAnswer(id, count) {
   let content = "--------------------\n";
   for (let i = 0; i < count; i++) {
     let j = (id + i) % quizData.length;
     content = content + "Q" + j + ": " + quizData[j].answer + "\n";
-    content = content + "他の回答: [ ";
     if (quizData[j].alternativeAnswers) {
+      content = content + "他の回答: [ ";
       for (let k = 0; k < quizData[j].alternativeAnswers.length; k++) {
         content = content + quizData[j].alternativeAnswers[k];
         if (k < quizData[j].alternativeAnswers.length - 1) {
           content += ", ";
         }
       }
+      content += " ]\n";
     }
-    content += " ]\n\n";
+    content += "\n";
   }
   return content;
 }
