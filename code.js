@@ -47,14 +47,11 @@ function createTrigger(functionName, hours) {
   triggerDay.setMinutes(0);
   triggerDay.setSeconds(0);
 
-  ScriptApp.newTrigger(functionName)
-    .timeBased()
-    .at(triggerDay)
-    .create();
+  ScriptApp.newTrigger(functionName).timeBased().at(triggerDay).create();
 
   // トリガー設定日時を記録
   var scriptProperties = PropertiesService.getScriptProperties();
-  scriptProperties.setProperty('Trigger set at ', triggerDay.toString());
+  scriptProperties.setProperty("Trigger set at ", triggerDay.toString());
 }
 
 /**
