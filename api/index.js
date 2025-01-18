@@ -17,6 +17,9 @@ const app = express();
 // CORS設定
 app.use(cors());
 
+// JSONボディをパースするミドルウェア
+app.use(express.json());
+
 // エントリポイントの定義
 app.get("/", (req, res) => {
   res.send({ message: "Hello, World." });
