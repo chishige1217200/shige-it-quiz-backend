@@ -77,10 +77,10 @@ app.listen(3000, () => console.log("Server ready on port 3000."));
  * Webhookを送信する処理
  * @param {*} req
  * @param {*} res
- * @param {responseMode} responseMode - レスポンスモード
+ * @param {responseMode} mode - レスポンスモード
  * @returns {void}
  */
-async function sendWebhook(req, res, responseMode) {
+async function sendWebhook(req, res, mode) {
   /**
    * バリデーション結果
    */
@@ -94,11 +94,19 @@ async function sendWebhook(req, res, responseMode) {
   // バリデーション成功
   const { id, count, webhook_url: webhookUrl } = req.body;
 
+  let message = "";
+
+  if (mode === responseMode.question) {
+    message = generateQuestion(id, count);
+  } else {
+    message = generateAnswer(id, count);
+  }
+
   try {
     /**
      * Webhook送信処理のエラーを格納
      */
-    const error = await sendWebhookApi("test", webhookUrl);
+    const error = await sendWebhookApi(message, webhookUrl);
     if (error) {
       throw error; // 明示的にエラーをスロー
     }
@@ -134,4 +142,32 @@ async function sendWebhookApi(message, webhookUrl) {
     console.error("エラーが発生しました:", error.message);
     return error; // エラーを返す
   }
+}
+
+function generateQuestion(id, count) {
+  let content = "--------------------\n";
+  for (let i = 0; i < count; i++) {
+    let j = (id + i) % quizData.length;
+    content = content + "Q" + j + ": " + quizData[j].question + "\n\n";
+  }
+  return content;
+}
+
+function generateAnswer(id, count) {
+  let content = "--------------------\n";
+  for (let i = 0; i < count; i++) {
+    let j = (id + i) % quizData.length;
+    content = content + "Q" + j + ": " + quizData[j].answer + "\n";
+    content = content + "他の回答: [ ";
+    if (quizData[j].alternativeAnswers) {
+      for (let k = 0; k < quizData[j].alternativeAnswers.length; k++) {
+        content = content + quizData[j].alternativeAnswers[k];
+        if (k < quizData[j].alternativeAnswers.length - 1) {
+          content += ", ";
+        }
+      }
+    }
+    content += " ]\n\n";
+  }
+  return content;
 }
