@@ -10,6 +10,16 @@ const baseUrl = "https://shige-it-quiz-backend.vercel.app/";
  */
 const dayInterval = 1;
 
+/**
+ * idの増量設定
+ * @type {number}
+ */
+const increaseID = 10;
+
+/**
+ * Spreadsheet変数
+ * @type {Spreadsheet}
+ */
 const spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
 
 // function myFunction() {
@@ -20,8 +30,8 @@ const spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
 // }
 
 /**
- * @Param {string} functionName 関数名
- * @Param {number} hours 時刻（時）
+ * @param {string} functionName 関数名
+ * @param {number} hours 時刻（時）
  */
 function createTrigger(functionName, hours) {
   const allTriggers = ScriptApp.getProjectTriggers();
@@ -55,10 +65,21 @@ function createTrigger(functionName, hours) {
 }
 
 /**
+ * idを更新する処理
+ * @param {string} シート名
+ */
+function updateSheetValue(sheetName) {
+  const sheet = spreadSheet.getSheetByName(sheetName);
+  const id = sheet.getRange(1, 2).getValue();
+  sheet.getRange(1, 2).setValue(id + increaseID);
+}
+
+/**
  * クイズの問題を投稿する処理
  */
 function sendQuestion() {
   post("send_question");
+  updateSheetValue("send_question");
   createTrigger("sendQuestion", 7);
 }
 
@@ -67,6 +88,7 @@ function sendQuestion() {
  */
 function sendAnswer() {
   post("send_answer");
+  updateSheetValue("send_answer");
   createTrigger("sendAnswer", 21);
 }
 
