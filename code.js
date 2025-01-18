@@ -1,3 +1,5 @@
+const baseUrl = "https://shige-it-quiz-backend.vercel.app/";
+
 const spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
 
 // function myFunction() {
@@ -39,9 +41,7 @@ function generateJsonFromSheet(sheet) {
   const data = sheet.getRange(1, 1, sheet.getLastRow(), 2).getValues();
 
   // 配列をオブジェクトに変換
-  const jsonObject = Object.fromEntries(
-    data.map(([key, value]) => [key, value])
-  );
+  const jsonObject = Object.fromEntries(data);
 
   // JSON形式に変換
   const jsonString = JSON.stringify(jsonObject, null, 2);
@@ -54,8 +54,6 @@ function generateJsonFromSheet(sheet) {
  * @param {string} apiName エントリポイント
  */
 function post(apiName) {
-  const baseUrl = "https://shige-it-quiz-backend.vercel.app/";
-
   const payload = generateJsonFromSheetName(apiName);
 
   // オプションの設定
