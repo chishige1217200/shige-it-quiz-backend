@@ -1,5 +1,25 @@
+/**
+ * APIのベースURL
+ * @type {string}
+ */
 const baseUrl = "https://shige-it-quiz-backend.vercel.app/";
 
+/**
+ * APIを叩くスケジュールの間隔設定
+ * @type {number}
+ */
+const dayInterval = 1;
+
+/**
+ * idの増量設定
+ * @type {number}
+ */
+const increaseID = 10;
+
+/**
+ * Spreadsheet変数
+ * @type {Spreadsheet}
+ */
 const spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
 
 // function myFunction() {
@@ -10,10 +30,57 @@ const spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
 // }
 
 /**
+ * @param {string} functionName 関数名
+ * @param {number} hours 時刻（時）
+ */
+function createTrigger(functionName, hours) {
+  const allTriggers = ScriptApp.getProjectTriggers();
+  let existingTrigger = null;
+
+  // すでに存在する{functionName}トリガーを探す
+  for (let i = 0; i < allTriggers.length; i++) {
+    if (allTriggers[i].getHandlerFunction() === functionName) {
+      existingTrigger = allTriggers[i];
+      break;
+    }
+  }
+
+  // すでに存在するトリガーがあれば削除
+  if (existingTrigger !== null) {
+    ScriptApp.deleteTrigger(existingTrigger);
+  }
+
+  // 新しいトリガーを作成
+  var triggerDay = new Date();
+  triggerDay.setDate(triggerDay.getDate() + dayInterval);
+  triggerDay.setHours(hours);
+  triggerDay.setMinutes(0);
+  triggerDay.setSeconds(0);
+
+  ScriptApp.newTrigger(functionName).timeBased().at(triggerDay).create();
+
+  // トリガー設定日時を記録
+  var scriptProperties = PropertiesService.getScriptProperties();
+  scriptProperties.setProperty("Trigger set at ", triggerDay.toString());
+}
+
+/**
+ * idを更新する処理
+ * @param {string} シート名
+ */
+function updateSheetValue(sheetName) {
+  const sheet = spreadSheet.getSheetByName(sheetName);
+  const id = sheet.getRange(1, 2).getValue();
+  sheet.getRange(1, 2).setValue(id + increaseID);
+}
+
+/**
  * クイズの問題を投稿する処理
  */
 function sendQuestion() {
   post("send_question");
+  updateSheetValue("send_question");
+  createTrigger("sendQuestion", 7);
 }
 
 /**
@@ -21,6 +88,8 @@ function sendQuestion() {
  */
 function sendAnswer() {
   post("send_answer");
+  updateSheetValue("send_answer");
+  createTrigger("sendAnswer", 21);
 }
 
 /**
