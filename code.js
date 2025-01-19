@@ -51,7 +51,7 @@ function createTrigger(functionName, hours) {
   }
 
   // 新しいトリガーを作成
-  var triggerDay = new Date();
+  const triggerDay = new Date();
   triggerDay.setDate(triggerDay.getDate() + dayInterval);
   triggerDay.setHours(hours);
   triggerDay.setMinutes(0);
@@ -60,7 +60,7 @@ function createTrigger(functionName, hours) {
   ScriptApp.newTrigger(functionName).timeBased().at(triggerDay).create();
 
   // トリガー設定日時を記録
-  var scriptProperties = PropertiesService.getScriptProperties();
+  const scriptProperties = PropertiesService.getScriptProperties();
   scriptProperties.setProperty("Trigger set at ", triggerDay.toString());
 }
 
