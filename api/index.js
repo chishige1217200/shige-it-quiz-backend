@@ -1,5 +1,5 @@
 const express = require("express");
-const { body, validationResult } = require("express-validator");
+const { body, query, validationResult } = require("express-validator");
 const cors = require("cors");
 const axios = require("axios");
 const path = require("path");
@@ -34,6 +34,19 @@ app.use(cors());
 app.use(express.json());
 
 /**
+ * getQuizData処理用のバリデーション
+ */
+const getValidation = [
+  query("id")
+    .isNumeric()
+    .withMessage("id must be a number.")
+    .custom((value) => value >= 0)
+    .withMessage("id must be 0 or greater.")
+    .custom((value) => value < quizData.length)
+    .withMessage("id must be less than " + quizData.length + "."),
+];
+
+/**
  * sendWebhook処理用のバリデーション
  */
 const postValidation = [
@@ -62,6 +75,10 @@ app.get("/", (req, res) => {
   res.send({ message: "Hello, World." });
 });
 
+app.get("/get_quizdata", getValidation, (req, res) => {
+  getQuizData(req, res);
+});
+
 app.post("/send_question", postValidation, (req, res) => {
   sendWebhook(req, res, responseMode.question);
 });
@@ -72,6 +89,32 @@ app.post("/send_answer", postValidation, (req, res) => {
 
 // サーバの開始
 app.listen(3000, () => console.log("Server ready on port 3000."));
+
+function getQuizData(req, res) {
+  /**
+   * バリデーション結果
+   */
+  const errors = validationResult(req);
+
+  // バリデーションでエラーが発生した場合の処理
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  /**
+   * 問題番号
+   * @type {number}
+   */
+  const id = req.query.id;
+
+  try {
+    res.json(quizData[id]);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message || "An unknown error occurred.",
+    });
+  }
+}
 
 /**
  * Webhookを送信する処理

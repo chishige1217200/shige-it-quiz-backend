@@ -19,3 +19,6 @@ Accept: application/json
     "count": 3,
     "webhook_url": "https://discord.com/api/webhooks/XXXXXXXXXXXXXXXXXX/YYYYYYYYYYYYYYYYYYYYYYYYYY"
 }
+
+### 問題情報取得
+GET http://localhost:3000/get_quizdata?id=0
