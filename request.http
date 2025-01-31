@@ -22,3 +22,6 @@ Accept: application/json
 
 ### 問題情報取得
 GET http://localhost:3000/get_quizdata?id=0
+
+### 問題数取得
+GET http://localhost:3000/get_quizcount
