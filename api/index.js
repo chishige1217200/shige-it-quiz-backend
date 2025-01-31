@@ -79,6 +79,10 @@ app.get("/get_quizdata", getValidation, (req, res) => {
   getQuizData(req, res);
 });
 
+app.get("/get_quizcount", (req, res) => {
+  getQuizCount(req, res);
+});
+
 app.post("/send_question", postValidation, (req, res) => {
   sendWebhook(req, res, responseMode.question);
 });
@@ -109,6 +113,16 @@ function getQuizData(req, res) {
 
   try {
     res.json(quizData[id]);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message || "An unknown error occurred.",
+    });
+  }
+}
+
+function getQuizCount(req, res) {
+  try {
+    res.json({ count: quizData.length });
   } catch (error) {
     res.status(500).json({
       error: error.message || "An unknown error occurred.",
