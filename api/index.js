@@ -213,7 +213,15 @@ function generateQuestion(id, count) {
   let content = "--------------------\n";
   for (let i = 0; i < count; i++) {
     let j = (id + i) % quizData.length;
-    content = content + "Q" + j + ": " + quizData[j].question + "\n\n";
+    content =
+      content +
+      "Q" +
+      j +
+      ": " +
+      quizData[j].question +
+      "\n" +
+      `解答はこちら: https://shige-it-quiz-frontend-next.vercel.app/?id=${j}` +
+      "\n\n";
   }
   return content;
 }
